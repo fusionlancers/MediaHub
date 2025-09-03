@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Upload Media</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+  	<nav class="navbar top-navbar">
+		<ul class="navbar-links">
+			<li><a href="/home">Home</a></li>
+			<li><a href="/media">Media</a></li>
+			<li><a href="/upload">Upload</a></li>
+			<li><form action="/logout" method="post" style="display:inline;"><button type="submit" class="logout-btn">Logout</button></form></li>
+		</ul>
+	</nav>
+
+  <div class="form-container">
+    <h2 style="text-align:center;">Upload Media</h2>
+    <form action="/media/upload" method="POST" enctype="multipart/form-data">
+      <div class="form-group">
+        <label for="title">Title*</label>
+        <input type="text" name="title" id="title" required />
+      </div>
+      <div class="form-group">
+        <label for="description">Description</label>
+        <textarea name="description" id="description" rows="3" placeholder="Example:"></textarea>
+      </div>
+      <div class="form-group">
+        <label for="file">File*</label>
+        <input type="file" name="file" id="file" required />
+      </div>
+      <button type="submit" class="submit-btn">Upload</button>
+    </form>
+    <p style="text-align:center;"><a href="/media">Back to list</a></p>
+  </div>
+</body>
+</html>
