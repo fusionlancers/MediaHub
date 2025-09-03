@@ -2,24 +2,37 @@ const express = require("express");
 const path = require("path");
 const bcrypt = require("bcrypt");
 const collection = require("./config");
+const mediaRouter = require("./routes/media");
 
+
+const session = require('express-session');
 const app = express();
-// convert data into json format
+
 app.use(express.json());
-
 app.use(express.urlencoded({extended: false}));
-
-// use EJS as view engine
 app.set('view engine', 'ejs');
-// link css
+
 app.use(express.static("public"));
+
+app.use(session({
+    secret: 'your_secret_key',
+    resave: false,
+    saveUninitialized: true
+}));
+
+
+app.get("/upload", (req, res) => {
+    res.render("upload");
+});
+
+app.use("/media", mediaRouter);
 
 
 app.get("/", (req, res) => {
     res.render("login");
 });
 
-// Add GET /login route
+
 app.get("/login", (req, res) => {
     res.render("login");
 });
@@ -28,9 +41,18 @@ app.get("/signup", (req, res) => {
     res.render("signup");
 });
 
-// Register User 
+    
+    app.get("/home", (req, res) => {
+        res.render("home", { username: "" });
+    });
+
 app.post("/signup", async (req, res) => {
     try {
+    
+        const existingUser = await collection.findOne({ email: req.body.email });
+        if (existingUser) {
+            return res.status(400).send("Signup failed: Email already registered");
+        }
         const data = {
             name: req.body.username,
             email: req.body.email,
@@ -43,28 +65,26 @@ app.post("/signup", async (req, res) => {
     }
 });
 
-// Login User
 app.post("/login", async (req, res) => {
     try {
-        const { username, password } = req.body;
-        const user = await collection.findOne({ name: username });
+        const { email, password } = req.body;
+        const user = await collection.findOne({ email });
         if (!user) {
             return res.status(400).send("User not found");
         }
-        // If you use bcrypt for password hashing, compare here
-        // const valid = await bcrypt.compare(password, user.password);
-        // For now, plain text check:
+
         if (user.password !== password) {
             return res.status(400).send("Invalid password");
         }
-        // Render home page with username
-        res.render("home", { username: user.name });
+
+    req.session.username = user.name;
+    req.session.userEmail = user.email;
+    res.redirect("/home");
     } catch (err) {
         res.status(400).send("Login failed: " + err.message);
     }
 });
 
-// Logout route (dummy, just redirect to login)
 app.post("/logout", (req, res) => {
     res.redirect("/login");
 });
