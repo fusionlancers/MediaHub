@@ -1,0 +1,287 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Home</title>
+	<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+	<nav class="navbar top-navbar">
+		<ul class="navbar-links">
+			<li><a href="/home">Home</a></li>
+			<li><a href="/media">Media</a></li>
+			<li><a href="/upload">Upload</a></li>
+			<li><form action="/logout" method="post" style="display:inline;"><button type="submit" class="logout-btn">Logout</button></form></li>
+		</ul>
+	</nav>
+	<div class="center-container">
+		<div class="home-container">
+			<h2 style="text-align:center; color: green;">Welcome, <%= username %>!</h2>
+			<p style="text-align:center; font-weight: 500;">Use the navigation bar above to access media, upload files, or manage your account.</p>
+		</div>
+	</div>
+</body>
+</html> -->
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        /* Floating Chat Button */
+        #chat-toggle {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background-color: #0078ff;
+            color: white;
+            font-size: 28px;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            transition: transform 0.2s ease;
+        }
+
+        #chat-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        /* Notification Dot */
+        #notification-dot {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 12px;
+            height: 12px;
+            background-color: #00ff00;
+            border-radius: 50%;
+            display: none;
+            border: 2px solid white;
+        }
+
+        /* Chat Window */
+        #chat-container {
+            position: fixed;
+            bottom: 85px;
+            right: 25px;
+            width: 320px;
+            height: 420px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            display: none;
+            flex-direction: column;
+            z-index: 1000;
+        }
+
+        /* Chat Header */
+        #chat-header {
+            background-color: #0078ff;
+            color: white;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #chat-close {
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        /* Chat Messages */
+        #chat-messages {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+            background-color: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Common Message Style */
+        .message {
+            margin: 6px 0;
+            padding: 8px 12px;
+            border-radius: 10px;
+            max-width: 70%;
+            word-wrap: break-word;
+            font-size: 14px;
+        }
+
+        /* Your Messages → Right */
+        .self-message {
+            background-color: #e6e6e6;
+            color: black;
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
+        }
+
+        /* Others' Messages → Left */
+        .other-message {
+            background-color: #0078ff;
+            color: white;
+            align-self: flex-start;
+            border-bottom-left-radius: 2px;
+        }
+
+        /* Chat Input Area */
+        #chat-form {
+            display: flex;
+            border-top: 1px solid #ddd;
+            padding: 8px;
+            background-color: white;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+        }
+
+        #chat-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        #chat-send {
+            background-color: #0078ff;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 14px;
+            margin-left: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        #chat-send:hover {
+            background-color: #005fcc;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar top-navbar">
+        <ul class="navbar-links">
+            <li><a href="/home">Home</a></li>
+            <li><a href="/media">Media</a></li>
+            <li><a href="/upload">Upload</a></li>
+            <li>
+                <form action="/logout" method="post" style="display:inline;">
+                    <button type="submit" class="logout-btn">Logout</button>
+                </form>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Welcome Section -->
+    <div class="center-container">
+        <div class="home-container">
+            <h2 style="text-align:center; color: green;">Welcome, <%= username %>!</h2>
+            <p style="text-align:center; font-weight: 500;">
+                Use the navigation bar above to access media, upload files, or manage your account.
+            </p>
+        </div>
+    </div>
+
+    <!-- Floating Chat Button -->
+    <button id="chat-toggle">
+        💬
+        <span id="notification-dot"></span>
+    </button>
+
+    <!-- Chat Window -->
+    <div id="chat-container">
+        <div id="chat-header">
+            Live Chat 💭
+            <span id="chat-close">✖</span>
+        </div>
+        <div id="chat-messages"></div>
+        <form id="chat-form">
+            <input id="chat-input" type="text" placeholder="Type a message..." required autocomplete="off">
+            <button id="chat-send" type="submit">Send</button>
+        </form>
+    </div>
+
+    <!-- Socket.io Script -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const username = "<%= username %>";
+        const chatToggle = document.getElementById("chat-toggle");
+        const chatContainer = document.getElementById("chat-container");
+        const chatClose = document.getElementById("chat-close");
+        const chatMessages = document.getElementById("chat-messages");
+        const chatForm = document.getElementById("chat-form");
+        const chatInput = document.getElementById("chat-input");
+        const notificationDot = document.getElementById("notification-dot");
+        let chatOpen = false;
+
+        // Toggle Chat Window
+        chatToggle.addEventListener("click", () => {
+            chatOpen = !chatOpen;
+            chatContainer.style.display = chatOpen ? "flex" : "none";
+            if (chatOpen) notificationDot.style.display = "none";
+        });
+
+        chatClose.addEventListener("click", () => {
+            chatOpen = false;
+            chatContainer.style.display = "none";
+        });
+
+        // Receive Messages
+        socket.on("chatMessage", (data) => {
+            const div = document.createElement("div");
+            div.classList.add("message");
+
+            const [sender, ...msgParts] = data.split(": ");
+            const messageText = msgParts.join(": ");
+
+            // Self vs Other
+            if (sender === username) {
+                div.classList.add("self-message");
+                div.textContent = messageText;  // Hide your name
+            } else {
+                div.classList.add("other-message");
+                div.textContent = sender + ": " + messageText; // Show others' names
+            }
+
+            chatMessages.appendChild(div);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            // Show notification dot if chat is closed and it's from others
+            if (!chatOpen && sender !== username) {
+                notificationDot.style.display = "block";
+            }
+        });
+
+        // Send Message
+        chatForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const msg = username + ": " + chatInput.value;
+            socket.emit("chatMessage", msg);
+            chatInput.value = "";
+        });
+    </script>
+</body>
+</html>
