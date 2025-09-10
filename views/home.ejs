@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
@@ -21,5 +21,148 @@
 			<p style="text-align:center; font-weight: 500;">Use the navigation bar above to access media, upload files, or manage your account.</p>
 		</div>
 	</div>
+</body>
+</html> -->
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Home</title>
+  <link rel="stylesheet" href="/style.css">
+  <style>
+   
+  </style>
+</head>
+<body>
+  <nav class="navbar top-navbar">
+    <ul class="navbar-links">
+      <li><a href="/home">Home</a></li>
+      <li><a href="/media">Media</a></li>
+      <li><a href="/upload">Upload</a></li>
+      <li>
+        <form action="/logout" method="post" style="display:inline;">
+          <button type="submit" class="logout-btn">Logout</button>
+        </form>
+      </li>
+    </ul>
+  </nav>
+
+  <div class="center-container">
+    <div class="home-container">
+      <h2 style="text-align:center; color: green;">Welcome, <%= username %>!</h2>
+      <p style="text-align:center; font-weight: 500;">Use the navigation bar above to access media, upload files, or manage your account.</p>
+    </div>
+  </div>
+
+  <button id="chat-toggle" aria-label="Open chat">
+    💬
+    <span id="notification-dot"></span>
+  </button>
+
+  <div id="chat-window" role="dialog" aria-hidden="true">
+    <div id="chat-header">
+      <div class="title">Live Chat <span style="opacity:0.9;">💭</span></div>
+      <div class="close" id="chat-close">✖</div>
+    </div>
+
+    <div id="chat-messages" aria-live="polite"></div>
+
+    <div id="chat-input-area">
+      <input id="chat-input" placeholder="Type a message..." autocomplete="off" />
+      <button id="chat-send">Send</button>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const username = "<%= username %>";
+    const socket = io({ auth: { username } });
+
+    const toggle = document.getElementById('chat-toggle');
+    const dot = document.getElementById('notification-dot');
+    const win = document.getElementById('chat-window');
+    const closeBtn = document.getElementById('chat-close');
+    const messagesEl = document.getElementById('chat-messages');
+    const input = document.getElementById('chat-input');
+    const sendBtn = document.getElementById('chat-send');
+
+    let open = false;
+
+    function openChat(){
+      win.style.display = 'flex';
+      win.setAttribute('aria-hidden','false');
+      open = true;
+      dot.style.display = 'none';
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+
+    function closeChat(){
+      win.style.display = 'none';
+      win.setAttribute('aria-hidden','true');
+      open = false;
+    }
+
+    toggle.addEventListener('click', () => {
+      open ? closeChat() : openChat();
+    });
+    closeBtn.addEventListener('click', closeChat);
+
+    function renderMessage(msg){
+      const bubble = document.createElement('div');
+      bubble.classList.add('bubble');
+
+      if (msg.sender === username){
+        bubble.classList.add('self');
+        bubble.textContent = msg.message;
+      } else {
+        bubble.classList.add('other');
+        const meta = document.createElement('div');
+        meta.className = 'meta';
+        meta.textContent = msg.sender;
+        bubble.appendChild(meta);
+
+        const text = document.createElement('div');
+        text.textContent = msg.message;
+        bubble.appendChild(text);
+      }
+
+      messagesEl.appendChild(bubble);
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+
+    socket.on('loadMessages', (arr) => {
+      messagesEl.innerHTML = '';
+      arr.forEach(renderMessage);
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+    });
+
+    
+    socket.on('newMessage', (msg) => {
+      renderMessage(msg);
+
+      
+      if (!open && msg.sender !== username){
+        dot.style.display = 'block';
+      }
+    });
+
+    function sendMessage(){
+      const text = input.value.trim();
+      if (!text) return;
+      socket.emit('sendMessage', text);
+      input.value = '';
+    }
+    sendBtn.addEventListener('click', sendMessage);
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter'){ e.preventDefault(); sendMessage(); }
+    });
+
+    toggle.addEventListener('click', () => setTimeout(()=>input.focus(), 100));
+  </script>
 </body>
 </html>
