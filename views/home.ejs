@@ -7,11 +7,19 @@
 	<link rel="stylesheet" href="/style.css">
 </head>
 <body>
-	<div class="form-container">
-		<h2>Welcome, <%= username %>!</h2>
-		<form action="/logout" method="post">
-			<button type="submit" class="red">Logout</button>
-		</form>
+	<nav class="navbar top-navbar">
+		<ul class="navbar-links">
+			<li><a href="/home">Home</a></li>
+			<li><a href="/media">Media</a></li>
+			<li><a href="/upload">Upload</a></li>
+			<li><form action="/logout" method="post" style="display:inline;"><button type="submit" class="logout-btn">Logout</button></form></li>
+		</ul>
+	</nav>
+	<div class="center-container">
+		<div class="home-container">
+			<h2 style="text-align:center; color: green;">Welcome, <%= username %>!</h2>
+			<p style="text-align:center; font-weight: 500;">Use the navigation bar above to access media, upload files, or manage your account.</p>
+		</div>
 	</div>
 </body>
 </html>
