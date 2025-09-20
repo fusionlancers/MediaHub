@@ -3,7 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const multer = require('multer');
 const { Readable } = require('stream');
-const Media = require('../models/Media');
+const Media = require('../models/media');
 require('dotenv').config();
 
 const router = express.Router();
