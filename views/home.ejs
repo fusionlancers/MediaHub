@@ -1,51 +1,551 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>🌐 Home</title>
-  <link rel="stylesheet" href="/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🌐 Home - MediaHub</title>
   <style>
-   
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: #333;
+    }
+
+    .navbar {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+      padding: 1rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .navbar ul {
+      list-style: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    .navbar a {
+      text-decoration: none;
+      color: #4a5568;
+      font-weight: 500;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .navbar a:hover {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+
+    .active {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+    }
+
+    .logout-btn {
+      background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+      color: white;
+      border: none;
+      padding: 0.5rem 1.5rem;
+      border-radius: 25px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .logout-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+    }
+
+    .main-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+      min-height: calc(100vh - 120px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+    }
+
+    .welcome-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 3rem 2.5rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      text-align: center;
+      max-width: 500px;
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .welcome-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+    }
+
+    .welcome-icon {
+      font-size: 6rem;
+      margin-bottom: 1.5rem;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    .welcome-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: #2d3748;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #2d3748, #4a5568);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .welcome-subtitle {
+      color: #4a5568;
+      font-size: 1.1rem;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+      font-weight: 400;
+    }
+
+    .quick-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .action-card {
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(102, 126, 234, 0.2);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      min-width: 140px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .action-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .action-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+      border-color: #667eea;
+    }
+
+    .action-card:hover::before {
+      opacity: 1;
+    }
+
+    .action-icon {
+      font-size: 2rem;
+      margin-bottom: 0.75rem;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .action-title {
+      font-weight: 600;
+      color: #2d3748;
+      font-size: 0.9rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .action-subtitle {
+      color: #718096;
+      font-size: 0.8rem;
+    }
+
+    .chat-container {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      z-index: 1000;
+    }
+
+    .chat-toggle {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      cursor: pointer;
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .chat-toggle:hover {
+      transform: scale(1.05);
+      box-shadow: 0 12px 30px rgba(102, 126, 234, 0.4);
+    }
+
+    .notification-dot {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 12px;
+      height: 12px;
+      background: #ff6b6b;
+      border-radius: 50%;
+      border: 2px solid white;
+      display: none;
+    }
+
+    .notification-dot.show {
+      display: block;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    .chat-window {
+      position: fixed;
+      bottom: 5rem;
+      right: 2rem;
+      width: 320px;
+      height: 400px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      display: none;
+      flex-direction: column;
+      z-index: 1001;
+      overflow: hidden;
+    }
+
+    .chat-window.show {
+      display: flex;
+      animation: slideUp 0.3s ease;
+    }
+
+    .chat-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.25rem;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .chat-close {
+      color: white;
+      font-size: 1.25rem;
+      cursor: pointer;
+      line-height: 1;
+      padding: 0.25rem;
+      border-radius: 50%;
+      transition: background-color 0.2s ease;
+    }
+
+    .chat-close:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .chat-messages {
+      flex: 1;
+      padding: 1rem;
+      overflow-y: auto;
+      background: #f8f9fa;
+      max-height: 280px;
+    }
+
+    .message-bubble {
+      margin-bottom: 1rem;
+      padding: 0.75rem 1rem;
+      border-radius: 18px;
+      max-width: 85%;
+      word-wrap: break-word;
+      animation: messageSlide 0.2s ease;
+    }
+
+    .message-bubble.self {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      margin-left: auto;
+      border-bottom-right-radius: 4px;
+    }
+
+    .message-bubble.other {
+      background: white;
+      color: #2d3748;
+      border: 1px solid #e2e8f0;
+      border-bottom-left-radius: 4px;
+    }
+
+    .message-meta {
+      font-size: 0.75rem;
+      opacity: 0.7;
+      margin-bottom: 0.25rem;
+      font-weight: 500;
+    }
+
+    .chat-input-area {
+      display: flex;
+      padding: 1rem;
+      background: white;
+      border-top: 1px solid #e2e8f0;
+      gap: 0.5rem;
+    }
+
+    .chat-input {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .chat-input:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+    }
+
+    .chat-send {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      border: none;
+      padding: 0.75rem 1rem;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .chat-send:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+
+    .chat-send:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes messageSlide {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .navbar ul {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1rem;
+      }
+
+      .main-container {
+        padding: 1rem;
+        gap: 1.5rem;
+      }
+
+      .welcome-title {
+        font-size: 1.8rem;
+      }
+
+      .welcome-subtitle {
+        font-size: 1rem;
+      }
+
+      .quick-actions {
+        gap: 0.75rem;
+      }
+
+      .action-card {
+        min-width: 120px;
+        padding: 1.25rem 1rem;
+      }
+
+      .chat-window {
+        width: calc(100vw - 2rem);
+        right: 1rem;
+        height: 70vh;
+        max-height: 500px;
+      }
+
+      .chat-toggle {
+        width: 56px;
+        height: 56px;
+        font-size: 1.25rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .welcome-title {
+        font-size: 1.6rem;
+      }
+
+      .welcome-card {
+        padding: 2rem 1.5rem;
+      }
+
+      .action-card {
+        min-width: 100px;
+        padding: 1rem 0.75rem;
+      }
+
+      .action-title {
+        font-size: 0.85rem;
+      }
+
+      .chat-window {
+        width: calc(100vw - 1rem);
+        right: 0.5rem;
+      }
+    }
   </style>
 </head>
 <body>
-  <nav class="navbar top-navbar">
+  <nav class="navbar">
     <ul class="navbar-links">
-      <li><a href="/home">Home</a></li>
-      <li><a href="/media">Media</a></li>
-  <li><a href="/media/upload">Upload</a></li>
+      <li><a href="/home">🏠 Home</a></li>
+      <li><a href="/feed" >📱 Feed</a></li>
+      <li><a href="/media">🎬 Media</a></li>
+      <li><a href="/media/upload">📤 Upload</a></li>
       <li>
         <form action="/logout" method="post" style="display:inline;">
-          <button type="submit" class="logout-btn">Logout</button>
+          <button type="submit" class="logout-btn">🚪 Logout</button>
         </form>
       </li>
     </ul>
   </nav>
 
-  <div class="center-container">
-    <div class="home-container">
-      <h2 style="text-align:center; color: green;">Welcome, <%= username %>!</h2>
-      <p style="text-align:center; font-weight: 500;">Use the navigation bar above to access media, upload files, or manage your account.</p>
+  <div class="main-container">
+
+    <div class="welcome-card">
+      <div class="welcome-icon">🌟</div>
+      <h1 class="welcome-title">Welcome, <%= username %>!</h1>
+      <p class="welcome-subtitle">
+        Get started by exploring your media library, uploading new content, or 
+        checking out what others are sharing in the community.
+      </p>
+    </div>
+
+    
+    <div class="quick-actions">
+      <a href="/media" class="action-card">
+        <div class="action-icon">🎬</div>
+        <div class="action-subtitle">View your files</div>
+      </a>
+      
+      <a href="/media/upload" class="action-card">
+        <div class="action-icon">📤</div>
+        <div class="action-subtitle">Add new content</div>
+      </a>
+      
+      <a href="/feed" class="action-card">
+        <div class="action-icon">📱</div>
+        <div class="action-subtitle">See recent posts</div>
+      </a>
     </div>
   </div>
 
-  <button id="chat-toggle" aria-label="Open chat">
-    💬
-    <span id="notification-dot"></span>
-  </button>
 
-  <div id="chat-window" role="dialog" aria-hidden="true">
-    <div id="chat-header">
-      <div class="title">Live Chat <span style="opacity:0.9;">💭</span></div>
-      <div class="close" id="chat-close">✖</div>
-    </div>
+  <div class="chat-container">
+    <button id="chat-toggle" aria-label="Open chat" class="chat-toggle">
+      💬
+      <span id="notification-dot" class="notification-dot"></span>
+    </button>
 
-    <div id="chat-messages" aria-live="polite"></div>
+    
+    <div id="chat-window" class="chat-window" role="dialog" aria-hidden="true">
+      <div id="chat-header" class="chat-header">
+        <div class="title">Live Chat 💭</div>
+        <div class="close" id="chat-close">✖</div>
+      </div>
 
-    <div id="chat-input-area">
-      <input id="chat-input" placeholder="Type a message..." autocomplete="off" />
-      <button id="chat-send">Send</button>
+      <div id="chat-messages" aria-live="polite" class="chat-messages"></div>
+
+      <div id="chat-input-area" class="chat-input-area">
+        <input 
+          id="chat-input" 
+          placeholder="Type a message..." 
+          autocomplete="off"
+          class="chat-input"
+        />
+        <button id="chat-send" class="chat-send" disabled>Send</button>
+      </div>
     </div>
   </div>
 
@@ -64,46 +564,50 @@
 
     let open = false;
 
-    function openChat(){
-      win.style.display = 'flex';
-      win.setAttribute('aria-hidden','false');
+    function openChat() {
+      win.classList.add('show');
+      win.setAttribute('aria-hidden', 'false');
       open = true;
-      dot.style.display = 'none';
+      dot.classList.remove('show');
       messagesEl.scrollTop = messagesEl.scrollHeight;
+      input.focus();
     }
 
-    function closeChat(){
-      win.style.display = 'none';
-      win.setAttribute('aria-hidden','true');
+    function closeChat() {
+      win.classList.remove('show');
+      win.setAttribute('aria-hidden', 'true');
       open = false;
     }
 
     toggle.addEventListener('click', () => {
       open ? closeChat() : openChat();
     });
+    
     closeBtn.addEventListener('click', closeChat);
 
-    function renderMessage(msg){
+    function renderMessage(msg) {
       const bubble = document.createElement('div');
-      bubble.classList.add('bubble');
+      bubble.classList.add('message-bubble');
 
-      if (msg.sender === username){
+      if (msg.sender === username) {
         bubble.classList.add('self');
-        bubble.textContent = msg.message;
+        bubble.innerHTML = `<div>${escapeHtml(msg.message)}</div>`;
       } else {
         bubble.classList.add('other');
-        const meta = document.createElement('div');
-        meta.className = 'meta';
-        meta.textContent = msg.sender;
-        bubble.appendChild(meta);
-
-        const text = document.createElement('div');
-        text.textContent = msg.message;
-        bubble.appendChild(text);
+        bubble.innerHTML = `
+          <div class="message-meta">${escapeHtml(msg.sender)}</div>
+          <div>${escapeHtml(msg.message)}</div>
+        `;
       }
 
       messagesEl.appendChild(bubble);
       messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
     }
 
     socket.on('loadMessages', (arr) => {
@@ -112,28 +616,51 @@
       messagesEl.scrollTop = messagesEl.scrollHeight;
     });
 
-    
     socket.on('newMessage', (msg) => {
       renderMessage(msg);
 
-      
-      if (!open && msg.sender !== username){
-        dot.style.display = 'block';
+      if (!open && msg.sender !== username) {
+        dot.classList.add('show');
       }
     });
 
-    function sendMessage(){
+    function sendMessage() {
       const text = input.value.trim();
       if (!text) return;
+      
       socket.emit('sendMessage', text);
       input.value = '';
+      sendBtn.disabled = true;
     }
+
+    function updateSendButton() {
+      sendBtn.disabled = !input.value.trim();
+    }
+
+    input.addEventListener('input', updateSendButton);
     sendBtn.addEventListener('click', sendMessage);
     input.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter'){ e.preventDefault(); sendMessage(); }
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        sendMessage();
+      }
     });
 
-    toggle.addEventListener('click', () => setTimeout(()=>input.focus(), 100));
+    toggle.addEventListener('click', () => {
+      if (!open) {
+        setTimeout(() => input.focus(), 200);
+      }
+    });    
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && open) {
+        closeChat();
+      }
+    });
+    win.addEventListener('click', (e) => {
+      if (e.target === win) {
+        closeChat();
+      }
+    });
   </script>
 </body>
 </html>

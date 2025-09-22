@@ -8,6 +8,7 @@ const { Server } = require('socket.io');
 
 const collection = require('./config');       
 const mediaRouter = require('./routes/media');  
+const postsRouter = require('./routes/posts');
 const Message = require('./models/message');   
 
 const app = express();
@@ -27,7 +28,14 @@ app.use(session({
   saveUninitialized: true
 }));
 
+
 app.use('/media', mediaRouter);
+app.use('/posts', postsRouter);
+// Render the feed page
+app.get('/feed', (req, res) => {
+  if (!req.session.username) return res.redirect('/login');
+  res.render('feed', { username: req.session.username });
+});
 
 app.get('/', (req, res) => res.render('login'));
 app.get('/login', (req, res) => res.render('login'));

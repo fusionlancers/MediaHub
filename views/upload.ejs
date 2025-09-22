@@ -1,40 +1,463 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <title>📤 Upload Media</title>
-  <link rel="stylesheet" href="/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload Media - MediaHub</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: #333;
+    }
+
+    .navbar {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+      padding: 1rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .navbar ul {
+      list-style: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    .navbar a {
+      text-decoration: none;
+      color: #4a5568;
+      font-weight: 500;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .navbar a:hover {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+
+    .active {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+    }
+
+    .logout-btn {
+      background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+      color: white;
+      border: none;
+      padding: 0.5rem 1.5rem;
+      border-radius: 25px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .logout-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+    }
+
+    .main-container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 2rem;
+      min-height: calc(100vh - 120px);
+    }
+
+    .upload-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .upload-title {
+      font-size: 2.8rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #ffffff, #f0f0ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.5rem;
+      position: relative;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .upload-title::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 4px;
+      background: linear-gradient(135deg, #ffffff, #e0e0ff);
+      border-radius: 2px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .upload-subtitle {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 1.2rem;
+      font-weight: 300;
+      margin-top: 0.5rem;
+    }
+
+    .upload-form-container {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 2.5rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .upload-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .form-label {
+      font-weight: 600;
+      color: #2d3748;
+      font-size: 0.95rem;
+    }
+
+    .form-input,
+    .form-textarea {
+      padding: 0.75rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background: white;
+    }
+
+    .form-input:focus,
+    .form-textarea:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 100px;
+      font-family: inherit;
+    }
+
+    .file-input-wrapper {
+      position: relative;
+      overflow: hidden;
+      display: inline-block;
+      width: 100%;
+    }
+
+    .file-input-btn {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 500;
+      width: 100%;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .file-input-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+
+    .file-input {
+      position: absolute;
+      left: -9999px;
+    }
+
+    .file-info {
+      margin-top: 0.5rem;
+      padding: 0.75rem;
+      background: #f7fafc;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      font-size: 0.9rem;
+      color: #4a5568;
+      display: none;
+    }
+
+    .file-info.show {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .form-buttons {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .submit-btn {
+      flex: 1;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .submit-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .cancel-btn {
+      background: #f7fafc;
+      color: #4a5568;
+      border: 2px solid #e2e8f0;
+      padding: 0.75rem 1.5rem;
+      border-radius: 10px;
+      font-weight: 500;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      text-align: center;
+    }
+
+    .cancel-btn:hover {
+      background: #e2e8f0;
+      transform: translateY(-1px);
+    }
+
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: #667eea;
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 0.5rem;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @media (max-width: 768px) {
+      .navbar ul {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1rem;
+      }
+
+      .main-container {
+        padding: 1rem;
+        margin: 0 0.5rem;
+      }
+
+      .upload-title {
+        font-size: 2.2rem;
+      }
+
+      .upload-form-container {
+        padding: 2rem 1.5rem;
+      }
+
+      .form-buttons {
+        flex-direction: column;
+      }
+
+      .submit-btn,
+      .cancel-btn {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .upload-title {
+        font-size: 1.9rem;
+      }
+
+      .upload-form-container {
+        padding: 1.5rem;
+      }
+    }
+  </style>
 </head>
 <body>
+  <nav class="navbar">
+    <ul class="navbar-links">
+      <li><a href="/home">🏠 Home</a></li>
+      <li><a href="/feed" >📱 Feed</a></li>
+      <li><a href="/media">🎬 Media</a></li>
+      <li><a href="/media/upload">📤 Upload</a></li>
+      <li>
+        <form action="/logout" method="post" style="display:inline;">
+          <button type="submit" class="logout-btn">🚪 Logout</button>
+        </form>
+      </li>
+    </ul>
+  </nav>
 
-  	<nav class="navbar top-navbar">
-		<ul class="navbar-links">
-			<li><a href="/home">Home</a></li>
-			<li><a href="/media">Media</a></li>
-            <li><a href="/media/upload">Upload</a></li>
-			<li><form action="/logout" method="post" style="display:inline;"><button type="submit" class="logout-btn">Logout</button></form></li>
-		</ul>
-	</nav>
+  <div class="main-container">
+    <div class="upload-header">
+      <h1 class="upload-title">Upload Media</h1>
+      <!-- <p class="upload-subtitle">Share your content with the community</p> -->
+    </div>
 
-  <div class="form-container">
-    <h2 style="text-align:center;">Upload Media</h2>
-    <form action="/media/upload" method="POST" enctype="multipart/form-data">
-      <div class="form-group">
-        <label for="title">Title*</label>
-        <input type="text" name="title" id="title" required />
-      </div>
-      <div class="form-group">
-        <label for="description">Description</label>
-        <textarea name="description" id="description" rows="3" placeholder="Example:"></textarea>
-      </div>
-      <div class="form-group">
-        <label for="file">File*</label>
-        <input type="file" name="file" id="file" required />
-      </div>
-      <button type="submit" class="submit-btn">Upload</button>
-    </form>
-    <p style="text-align:center;"><a href="/media">Back to list</a></p>
+    <div class="upload-form-container">
+      <form action="/media/upload" method="POST" enctype="multipart/form-data" id="uploadForm" class="upload-form">
+        <div class="form-group">
+          <label for="title" class="form-label">Title *</label>
+          <input 
+            type="text" 
+            id="title" 
+            name="title" 
+            class="form-input" 
+            placeholder="Enter a title for your media"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="description" class="form-label">Description</label>
+          <textarea 
+            id="description" 
+            name="description" 
+            class="form-textarea" 
+            placeholder="Tell us about your media..."
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="file" class="form-label">Select File *</label>
+          <div class="file-input-wrapper">
+            <button type="button" class="file-input-btn" onclick="document.getElementById('file').click()">
+              📁 Choose File
+            </button>
+            <input 
+              type="file" 
+              id="file" 
+              name="file" 
+              class="file-input" 
+              accept="image/*,video/*,audio/*" 
+              required
+            >
+          </div>
+          <div id="fileInfo" class="file-info"></div>
+        </div>
+
+        <div class="form-buttons">
+          <button type="submit" class="submit-btn" id="submitBtn">
+            <span id="submitText">🚀 Upload Media</span>
+            <span id="submitLoading" class="loading" style="display: none;"></span>
+          </button>
+          <a href="/media" class="cancel-btn">← Back to Media</a>
+        </div>
+      </form>
+    </div>
   </div>
+
+  <script>
+    const fileInput = document.getElementById('file');
+    const fileInfo = document.getElementById('fileInfo');
+    const submitBtn = document.getElementById('submitBtn');
+    const submitText = document.getElementById('submitText');
+    const submitLoading = document.getElementById('submitLoading');
+    const uploadForm = document.getElementById('uploadForm');
+
+    // File input change handler
+    fileInput.addEventListener('change', function() {
+      const file = this.files[0];
+      if (file) {
+        const fileSize = (file.size / 1024 / 1024).toFixed(2);
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'video/mp4', 'video/webm', 'video/ogg', 'audio/mp3', 'audio/wav', 'audio/ogg'];
+        
+        if (file.size > 500 * 1024 * 1024) {
+          alert('File size must be less than 500MB');
+          this.value = '';
+          fileInfo.classList.remove('show');
+          return;
+        }
+
+        if (!allowedTypes.includes(file.type) && !file.type.startsWith('image/') && !file.type.startsWith('video/') && !file.type.startsWith('audio/')) {
+          alert('Please select a valid file type (Images, Videos, Audio)');
+          this.value = '';
+          fileInfo.classList.remove('show');
+          return;
+        }
+
+        fileInfo.innerHTML = `
+          <strong>${file.name}</strong><br>
+          Size: ${fileSize}MB | Type: ${file.type || 'Unknown'}
+        `;
+        fileInfo.classList.add('show');
+      }
+    });
+
+    // Form submission handler
+    uploadForm.addEventListener('submit', function(e) {
+      if (!fileInput.files.length) {
+        e.preventDefault();
+        alert('Please select a file to upload');
+        return;
+      }
+
+      // Show loading state
+      submitBtn.disabled = true;
+      submitText.style.display = 'none';
+      submitLoading.style.display = 'inline-block';
+    });
+
+    // Reset form on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      fileInput.value = '';
+      fileInfo.classList.remove('show');
+    });
+  </script>
 </body>
 </html>
-2

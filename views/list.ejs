@@ -1,127 +1,854 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
- <title>🗂️ Media List</title>
-  <link rel="stylesheet" href="/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Media - MediaHub</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: #333;
+    }
+
+    .navbar {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+      padding: 1rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .navbar ul {
+      list-style: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    .navbar a {
+      text-decoration: none;
+      color: #4a5568;
+      font-weight: 500;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .navbar a:hover {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+
+    .active {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+    }
+
+    .logout-btn {
+      background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+      color: white;
+      border: none;
+      padding: 0.5rem 1.5rem;
+      border-radius: 25px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .logout-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+    }
+
+    .main-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+      min-height: calc(100vh - 120px);
+    }
+
+    .media-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .media-title {
+      font-size: 2.8rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #ffffff, #f0f0ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.5rem;
+      position: relative;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .media-title::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 4px;
+      background: linear-gradient(135deg, #ffffff, #e0e0ff);
+      border-radius: 2px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .media-subtitle {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 1.2rem;
+      font-weight: 300;
+      margin-top: 0.5rem;
+    }
+
+    .upload-btn-container {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .upload-btn {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      border: none;
+      padding: 0.75rem 2rem;
+      border-radius: 25px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .upload-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+    }
+
+    .media-list {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    .media-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 1.75rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      transition: all 0.4s ease;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      cursor: pointer;
+    }
+
+    .media-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      /* background: linear-gradient(135deg, #667eea, #764ba2); */
+    }
+
+    /* .media-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      border-color: rgba(102, 126, 234, 0.3);
+    } */
+
+    .media-card-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .media-card-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #2d3748;
+      margin-bottom: 0.75rem;
+      line-height: 1.3;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .media-card-date {
+      color: #718096;
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+      font-weight: 500;
+      font-style: italic;
+    }
+
+    .media-card-desc {
+      color: #4a5568;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+      font-size: 0.95rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      flex-grow: 1;
+    }
+
+    .media-card-preview {
+      width: 100%;
+      height: 220px;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 1.25rem;
+      position: relative;
+      background: linear-gradient(135deg, #f7fafc, #e2e8f0);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    /* .media-card-preview:hover {
+      transform: scale(1.02);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    } */
+
+    .media-card-preview img,
+    .media-card-preview video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.3s ease;
+    }
+
+    /* .media-card-preview img:hover,
+    .media-card-preview video:hover {
+      transform: scale(1.02);
+    } */
+
+    .media-card-preview audio {
+      width: 100%;
+      height: auto;
+      background: #f7fafc;
+      border-radius: 8px;
+      padding: 1rem;
+    }
+
+    .media-card-preview video {
+      background: #000;
+    }
+
+    .media-card-preview-placeholder {
+      color: #a0aec0;
+      font-style: italic;
+      text-align: center;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .media-card-preview-placeholder svg {
+      width: 48px;
+      height: 48px;
+      opacity: 0.5;
+    }
+
+    .media-card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: auto;
+      gap: 1rem;
+    }
+
+    .media-card-meta {
+      font-size: 0.9rem;
+      color: #667eea;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .media-card-meta::before {
+      content: '📁';
+      font-size: 1.1rem;
+    }
+
+    .media-card-actions {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .action-btn {
+      background: rgba(102, 126, 234, 0.1);
+      border: 1px solid rgba(102, 126, 234, 0.2);
+      color: #667eea;
+      padding: 0.5rem 1rem;
+      border-radius: 15px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      white-space: nowrap;
+    }
+
+    .action-btn:hover {
+      background: #667eea;
+      color: white;
+      transform: translateY(-1px);
+    }
+
+    .delete-btn {
+      background: rgba(255, 107, 107, 0.1);
+      border: 1px solid rgba(255, 107, 107, 0.2);
+      color: #ff6b6b;
+    }
+
+    .delete-btn:hover {
+      background: #ff6b6b;
+      color: white;
+    }
+
+    .no-media {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 1.2rem;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      grid-column: 1 / -1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .no-media::before {
+      content: '📂';
+      font-size: 4rem;
+    }
+
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: #667eea;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 768px) {
+      .navbar ul {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1rem;
+      }
+
+      .main-container {
+        padding: 1rem;
+      }
+
+      .media-title {
+        font-size: 2.2rem;
+      }
+
+      .media-list {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+
+      .media-card {
+        padding: 1.5rem;
+      }
+
+      .media-card-preview {
+        height: 200px;
+      }
+
+      .media-card-actions {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .action-btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .media-title {
+        font-size: 1.9rem;
+      }
+
+      .media-card {
+        padding: 1.25rem;
+      }
+
+      .media-card-title {
+        font-size: 1.2rem;
+      }
+
+      .media-card-desc {
+        font-size: 0.9rem;
+        -webkit-line-clamp: 2;
+      }
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.9);
+      animation: fadeIn 0.3s ease;
+    }
+
+    .modal-content {
+      position: relative;
+      margin: auto;
+      display: flex;
+      flex-direction: column;
+      max-width: 90%;
+      max-height: 90%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+      animation: slideIn 0.3s ease;
+      max-width: 600px;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem 1.5rem;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+    }
+
+    .modal-user {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 600;
+    }
+
+    .modal-user::before {
+      content: '👤';
+      font-size: 1.2rem;
+    }
+
+    .close {
+      color: white;
+      font-size: 2rem;
+      font-weight: bold;
+      cursor: pointer;
+      line-height: 1;
+      transition: opacity 0.3s ease;
+    }
+
+    .close:hover {
+      opacity: 0.7;
+    }
+
+    .modal-body {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      min-height: 300px;
+    }
+
+    .modal-media {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f7fafc;
+    }
+
+    .modal-media img,
+    .modal-media video {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    .modal-media audio {
+      width: 100%;
+      padding: 2rem;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideIn {
+      from { 
+        opacity: 0;
+        transform: translate(-50%, -60%);
+      }
+      to { 
+        opacity: 1;
+        transform: translate(-50%, -50%);
+      }
+    }
+
+    .edit-form {
+      display: none;
+      margin-top: 1rem;
+      padding: 1.5rem;
+      background: #f7fafc;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .edit-form.show {
+      display: block;
+      animation: slideDown 0.3s ease;
+    }
+
+    .edit-form input,
+    .edit-form textarea {
+      width: 100%;
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      transition: border-color 0.3s ease;
+    }
+
+    .edit-form input:focus,
+    .edit-form textarea:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .edit-form textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .edit-buttons {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: flex-end;
+    }
+
+    .save-btn {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      border: none;
+      padding: 0.5rem 1.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .cancel-btn {
+      background: #f7fafc;
+      color: #4a5568;
+      border: 2px solid #e2e8f0;
+      padding: 0.5rem 1.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
 </head>
 <body>
+  <nav class="navbar">
+    <ul class="navbar-links">
+      <li><a href="/home">🏠 Home</a></li>
+      <li><a href="/feed" >📱 Feed</a></li>
+      <li><a href="/media">🎬 Media</a></li>
+      <li><a href="/media/upload">📤 Upload</a></li>
+      <li>
+        <form action="/logout" method="post" style="display:inline;">
+          <button type="submit" class="logout-btn">🚪 Logout</button>
+        </form>
+      </li>
+    </ul>
+  </nav>
 
-	<nav class="navbar top-navbar">
-		<ul class="navbar-links">
-			<li><a href="/home">Home</a></li>
-			<li><a href="/media">Media</a></li>
-      <li><a href="/media/upload">Upload</a></li>
-			<li><form action="/logout" method="post" style="display:inline;"><button type="submit" class="logout-btn">Logout</button></form></li>
-		</ul>
-	</nav>
+  <div class="main-container">
+    <div class="media-header">
+      <h1 class="media-title">My Media</h1>
+      <!-- <p class="media-subtitle">Manage your uploaded files</p> -->
+    </div>
 
-  <div class="media-card">
-    <h2 style="text-align:center;">View Uploaded Media</h2>
-    <p style="text-align:center;"><a href="/media/upload" class="upload-btn">Upload new media</a></p>
+    <div class="upload-btn-container">
+      <a href="/media/upload" class="upload-btn">📤 Upload New File</a>
+    </div>
 
-    <% if (!media || media.length === 0) { %>
-      <p style="text-align:center;">No media uploaded yet.</p>
-    <% } else { %>
-      <div class="media-table-wrapper">
-        <table class="media-table">
-            <tr>
-              <th>SL NO</th>
-              <th>Title</th>
-              <th>Description</th>
-              <th>Preview</th>
-              <th>Actions</th>
-            </tr>
-            <% media.forEach((item, idx) => { %>
-              <tr>
-                <td><%= idx + 1 %></td>
-                <td><%= item.title %></td>
-                <td><%= item.description %></td>
-                <td>
-                <% if (item.contentType && item.contentType.startsWith('image')) { %>
-                    <img src="/media/file/<%= item.fileId %>" class="media-preview-img" style="cursor:pointer" onclick="openPreviewModal('<%= item.fileId %>', '<%= item.contentType %>')" />
-                <% } else if (item.contentType && item.contentType.startsWith('video')) { %>
-                    <video src="/media/file/<%= item.fileId %>" class="media-preview-video" controls style="cursor:pointer" onclick="openPreviewModal('<%= item.fileId %>', '<%= item.contentType %>')"></video>
-                <% } else if (item.contentType && item.contentType.startsWith('audio')) { %>
-                  <audio src="/media/file/<%= item.fileId %>" class="media-preview-audio" controls></audio>
+    <div class="media-list">
+      <% if (!media || media.length === 0) { %>
+        <div class="no-media">
+          <div>No media files yet.</div>
+          <div style="font-size: 0.9rem; opacity: 0.8; margin-top: 0.5rem;">
+            Upload your first file to get started!
+          </div>
+        </div>
+      <% } else { %>
+        <% media.forEach((item, idx) => { %>
+          <div class="media-card" onclick="openPreviewModal('<%= item.fileId %>', '<%= item.contentType || '' %>')">
+            <div class="media-card-content">
+              <div class="media-card-title"><%= item.title %></div>
+              <div class="media-card-date">
+                <%= new Date(item.uploadDate).toLocaleString('en-US', { 
+                  year: 'numeric', 
+                  month: 'short', 
+                  day: 'numeric', 
+                  hour: '2-digit', 
+                  minute: '2-digit',
+                  hour12: true 
+                }) %>
+              </div>
+              
+              <% if (item.description && item.description.trim()) { %>
+                <div class="media-card-desc"><%= item.description %></div>
+              <% } %>
+              
+              <div class="media-card-preview">
+                <% if (item.contentType && item.contentType.startsWith('image/')) { %>
+                  <img src="/media/preview/<%= item.fileId %>" alt="<%= item.title %>" 
+                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                  <div class="media-card-preview-placeholder">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                    </svg>
+                    <div>Image preview not available</div>
+                  </div>
+                <% } else if (item.contentType && item.contentType.startsWith('video/')) { %>
+                  <video controls preload="metadata" style="width: 100%; height: 100%; object-fit: cover;">
+                    <source src="/media/preview/<%= item.fileId %>" type="<%= item.contentType %>">
+                    <div class="media-card-preview-placeholder">
+                      <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4z"/>
+                      </svg>
+                      <div>Video preview not available</div>
+                    </div>
+                  </video>
+                <% } else if (item.contentType && item.contentType.startsWith('audio/')) { %>
+                  <audio controls style="width: 100%;">
+                    <source src="/media/preview/<%= item.fileId %>" type="<%= item.contentType %>">
+                    Your browser does not support audio playback.
+                  </audio>
                 <% } else { %>
-                    <a href="/media/file/<%= item.fileId %>?download=true" class="download-btn">Download</a>
+                  <div class="media-card-preview-placeholder">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 14h-3v3h-2v-3H8v-2h3v-3h2v3h3v2zm-3-7V3.5L18.5 9H13z"/>
+                    </svg>
+                    <div><%= item.filename || 'File' %></div>
+                    <div style="font-size: 0.8rem; opacity: 0.7;"><%= item.contentType || 'Unknown type' %></div>
+                  </div>
                 <% } %>
-                  <a href="/media/file/<%= item.fileId %>?download=true" class="download-btn" style="margin-top:6px;display:block;">Download</a>
-              </td>
-              <td>
-                <button type="button" class="submit-btn" data-id="<%= item._id %>" data-title="<%= item.title.replace(/"/g, '&quot;') %>" data-desc="<%= item.description.replace(/"/g, '&quot;') %>" onclick="openEditModalFromBtn(this)">Edit</button>
-                <a href="/media/delete/<%= item.fileId %>" class="delete-icon-btn" onclick="return confirm('Delete this file?')">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e74c3c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m5 0V4a2 2 0 0 1 2-2h0a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+              </div>
+            </div>
+            
+            <div class="media-card-footer">
+              <div class="media-card-meta">
+                File: <%= item.filename %>
+              </div>
+              <div class="media-card-actions">
+                <a href="/media/file/<%= item.fileId %>?download=true" class="action-btn" title="Download" style="pointer-events: auto;">
+                  ⬇️ Download
                 </a>
-              </td>
-            </tr>
-          <% }) %>
-        </table>
-      </div>
-  <!-- Edit Modal -->
-  <div id="editModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.6);z-index:9999;align-items:center;justify-content:center;">
-    <span style="position:absolute;top:30px;right:40px;font-size:2.5rem;color:#fff;cursor:pointer;" onclick="closeEditModal()">&times;</span>
-    <form id="editForm" method="POST" style="background:#fff;padding:2rem 2.5rem;border-radius:14px;box-shadow:0 2px 16px #0002;min-width:320px;max-width:90vw;display:flex;flex-direction:column;gap:1rem;align-items:center;">
-      <h3>Edit Media</h3>
-      <input type="hidden" name="_id" id="editId" />
-      <div style="width:100%">
-        <label for="editTitle">Title</label>
-        <input type="text" name="title" id="editTitle" required style="width:100%;padding:0.5rem;margin-top:0.3rem;" />
-      </div>
-      <div style="width:100%">
-        <label for="editDesc">Description</label>
-        <input type="text" name="description" id="editDesc" style="width:100%;padding:0.5rem;margin-top:0.3rem;" />
-      </div>
-      <button type="submit" class="submit-btn">Update</button>
-    </form>
+                <button class="action-btn" onclick="event.stopPropagation(); toggleEditForm('<%= item._id %>')" title="Edit" style="pointer-events: auto;">
+                  ✏️ Edit
+                </button>
+                <a href="/media/delete/<%= item._id %>" class="action-btn delete-btn" 
+                   onclick="event.stopPropagation(); return confirm('Are you sure you want to delete this file?')" title="Delete" style="pointer-events: auto;">
+                  🗑️ Delete
+                </a>
+              </div>
+            </div>
+
+            <!-- Edit Form -->
+            <div id="editForm-<%= item._id %>" class="edit-form">
+              <form action="/media/update/<%= item._id %>" method="POST">
+                <input type="hidden" name="_id" value="<%= item._id %>">
+                <input type="text" name="title" value="<%= item.title %>" placeholder="Title" required>
+                <textarea name="description" placeholder="Description" rows="2"><%= item.description || '' %></textarea>
+                <div class="edit-buttons">
+                  <button type="submit" class="save-btn">💾 Save</button>
+                  <button type="button" class="cancel-btn" onclick="toggleEditForm('<%= item._id %>')">Cancel</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        <% }) %>
+      <% } %>
+    </div>
   </div>
-  <script>
-    function openEditModalFromBtn(btn) {
-      var id = btn.getAttribute('data-id');
-      var title = btn.getAttribute('data-title');
-      var desc = btn.getAttribute('data-desc');
-      document.getElementById('editModal').style.display = 'flex';
-      document.getElementById('editId').value = id;
-      document.getElementById('editTitle').value = title;
-      document.getElementById('editDesc').value = desc;
-      document.getElementById('editForm').action = '/media/update/' + id;
-    }
-    function closeEditModal() {
-      document.getElementById('editModal').style.display = 'none';
-    }
-    window.onclick = function(event) {
-      var modal = document.getElementById('editModal');
-      if(event.target == modal) closeEditModal();
-    }
-  </script>
-  
-  <div id="previewModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.7);z-index:9999;align-items:center;justify-content:center;">
-    <span style="position:absolute;top:30px;right:40px;font-size:2.5rem;color:#fff;cursor:pointer;" onclick="closePreviewModal()">&times;</span>
-    <div id="previewContent" style="max-width:80vw;max-height:80vh;display:flex;align-items:center;justify-content:center;"></div>
+
+  <!-- Preview Modal -->
+  <div id="previewModal" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 90%; max-height: 90%; margin: auto;">
+      <div class="modal-header">
+        <div class="modal-user" id="previewUser"></div>
+        <span class="close" onclick="closePreviewModal()">&times;</span>
+      </div>
+      <div class="modal-body">
+        <div class="modal-media" id="previewContent"></div>
+      </div>
+    </div>
   </div>
+
   <script>
-    function openPreviewModal(fileId, contentType) {
-      var modal = document.getElementById('previewModal');
-      var content = document.getElementById('previewContent');
-      content.innerHTML = '';
-      if(contentType.startsWith('image')) {
-        content.innerHTML = '<img src="/media/file/' + fileId + '" style="max-width:100%;max-height:80vh;border-radius:12px;box-shadow:0 2px 16px #0003;" />';
-      } else if(contentType.startsWith('video')) {
-        content.innerHTML = '<video src="/media/file/' + fileId + '" controls autoplay style="max-width:100%;max-height:80vh;border-radius:12px;box-shadow:0 2px 16px #0003;"></video>';
+    function toggleEditForm(id) {
+      event.stopPropagation();
+      const form = document.getElementById('editForm-' + id);
+      if (form.classList.contains('show')) {
+        form.classList.remove('show');
+      } else {
+        // Hide other forms
+        document.querySelectorAll('.edit-form').forEach(f => f.classList.remove('show'));
+        form.classList.add('show');
       }
-      modal.style.display = 'flex';
     }
+
+    function openPreviewModal(fileId, contentType) {
+      const modal = document.getElementById('previewModal');
+      const content = document.getElementById('previewContent');
+      const user = document.getElementById('previewUser');
+      
+      user.textContent = 'Preview';
+      
+      if (contentType && contentType.startsWith('image/')) {
+        content.innerHTML = `<img src="/media/preview/${fileId}" style="max-width: 100%; max-height: 100%; object-fit: contain;" alt="Preview">`;
+      } else if (contentType && contentType.startsWith('video/')) {
+        content.innerHTML = `<video src="/media/preview/${fileId}" controls style="max-width: 100%; max-height: 100%; object-fit: contain;">
+          <source src="/media/preview/${fileId}" type="${contentType}">
+          Your browser does not support video playback.
+        </video>`;
+      } else if (contentType && contentType.startsWith('audio/')) {
+        content.innerHTML = `<audio src="/media/preview/${fileId}" controls style="width: 100%; padding: 2rem;">
+          <source src="/media/preview/${fileId}" type="${contentType}">
+          Your browser does not support audio playback.
+        </audio>`;
+      } else {
+        content.innerHTML = `<div style="color: #a0aec0; font-style: italic; text-align: center; padding: 2rem;">
+          <div style="font-size: 2rem; margin-bottom: 1rem;">📄</div>
+          <div>File Preview</div>
+          <div style="font-size: 0.9rem; opacity: 0.7;">${contentType || 'Unknown type'}</div>
+        </div>`;
+      }
+      
+      modal.style.display = 'block';
+    }
+
     function closePreviewModal() {
       document.getElementById('previewModal').style.display = 'none';
       document.getElementById('previewContent').innerHTML = '';
     }
+
+    // Close modal when clicking outside
     window.onclick = function(event) {
-      var modal = document.getElementById('previewModal');
-      if(event.target == modal) closePreviewModal();
+      const modal = document.getElementById('previewModal');
+      if (event.target === modal) {
+        closePreviewModal();
+      }
     }
+
+    // Form submission success handler
+    document.addEventListener('DOMContentLoaded', function() {
+      // Handle form submissions
+      document.querySelectorAll('form').forEach(form => {
+        form.addEventListener('submit', function() {
+          const submitBtn = this.querySelector('button[type="submit"]');
+          if (submitBtn) {
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<span class="loading"></span> Saving...';
+            submitBtn.disabled = true;
+            
+            // Re-enable on form reset or page change
+            this.addEventListener('reset', () => {
+              submitBtn.innerHTML = originalText;
+              submitBtn.disabled = false;
+            });
+          }
+        });
+      });
+
+      // Close modals on escape key
+      document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+          closePreviewModal();
+          document.querySelectorAll('.edit-form.show').forEach(form => {
+            form.classList.remove('show');
+          });
+        }
+      });
+    });
   </script>
-    <% } %>
-  </div>
 </body>
 </html>
